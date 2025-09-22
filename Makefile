@@ -7,8 +7,10 @@ SRCDIR = src
 OBJDIR = obj
 
 # Source files
-SOURCES = main.cpp $(SRCDIR)/Order.cpp
-OBJECTS = $(OBJDIR)/main.o $(OBJDIR)/Order.o
+SRC_FILES = $(wildcard $(SRCDIR)/*.cpp)
+SOURCES = main.cpp $(SRC_FILES)
+OBJ_FILES = $(SRC_FILES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+OBJECTS = $(OBJDIR)/main.o $(OBJ_FILES)
 EXECUTABLE = main
 
 # Default target
@@ -18,17 +20,21 @@ all: $(EXECUTABLE)
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-# Build the executable
-$(EXECUTABLE): $(OBJDIR) $(OBJECTS)
+# Build the executable by linking all object files together
+$(EXECUTABLE): $(OBJECTS)
+	@echo "Linking all object files into executable: $(EXECUTABLE)"
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+	@echo "Build complete!"
 
 # Compile main.cpp
-$(OBJDIR)/main.o: main.cpp $(SRCDIR)/Order.h | $(OBJDIR)
+$(OBJDIR)/main.o: main.cpp | $(OBJDIR)
+	@echo "Compiling main.cpp..."
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c main.cpp -o $(OBJDIR)/main.o
 
-# Compile Order.cpp
-$(OBJDIR)/Order.o: $(SRCDIR)/Order.cpp $(SRCDIR)/Order.h | $(OBJDIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $(SRCDIR)/Order.cpp -o $(OBJDIR)/Order.o
+# Generic rule to compile all .cpp files in src directory
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+	@echo "Compiling $<..."
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run the program
 run: $(EXECUTABLE)

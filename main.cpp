@@ -6,18 +6,15 @@
 #include <sstream>
 #include <vector>
 
-#include "src/utils.cpp"
+#include "src/utils.h"
 
 using namespace std;
 
-// struct Order {
-//     time_t timestamp;
-//     string restaurant;
-//     string item;
-//     int price;
-// };
+// * Main function
 
-// Main function
+// * Functions from the "utils.cpp" file:
+// * – parse_order_line
+// * – print_orders
 
 int main() {
     fstream OrdersFile("orders.txt");
@@ -35,5 +32,10 @@ int main() {
 
     print_orders(orders);
     OrdersFile.close();
+
+    // We now have access to the `orders` vector to perform the different sorts.
+
+
+    
     return 0;
 }

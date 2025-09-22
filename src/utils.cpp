@@ -1,19 +1,12 @@
+#include "utils.h"
 #include <stdio.h>
 #include <time.h>
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
 
 using namespace std;
-
-struct Order {
-    time_t timestamp;
-    string restaurant;
-    string item;
-    int price;
-};
 
 // Function to map month abbreviation to number (1-12)
 int month_to_number(const std::string& month) {

@@ -1,9 +1,15 @@
+// * Daniel Medina | A01286980
+// * Monday September 22nd, 2025
+
+// This file contains the declarations for the utility functions used in the
+// project, including time conversion and order parsing.
+
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <ctime>
 #include <string>
 #include <vector>
-#include <ctime>
 
 struct Order {
     time_t timestamp;
@@ -19,4 +25,4 @@ void parse_details(const std::string& details_str, Order& order);
 Order parse_order_line(std::string line);
 void print_orders(const std::vector<Order>& orders);
 
-#endif // UTILS_H
+#endif  // UTILS_H

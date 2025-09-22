@@ -1,6 +1,15 @@
+// * Daniel Medina | A01286980
+// * Monday September 22nd, 2025
+
+// This file contains the definitions for the utility functions used in the
+// project. These include functions for converting time strings to Unix
+// timestamps, parsing order details from strings, and printing orders.
+
 #include "utils.h"
+
 #include <stdio.h>
 #include <time.h>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -10,13 +19,13 @@ using namespace std;
 
 // Function to map month abbreviation to number (1-12)
 int month_to_number(const std::string& month) {
-    const std::string months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    const std::string months[] = {"ene", "Feb", "Mar", "Abr", "May", "Jun",
+                                  "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"};
 
     // Tiny linear search 👀
     for (int i = 0; i < 12; i++) {
         if (month == months[i]) {
-            return i + 1;
+            return i;
         }
     }
     return 0;  // invalid month
@@ -114,8 +123,18 @@ void print_orders(const vector<Order>& orders) {
     struct tm* timeinfo = localtime(&orders[0].timestamp);
     strftime(time_str, sizeof(time_str), "%b %d %H:%M:%S", timeinfo);
 
-    cout << "Date: " << orders[0].timestamp << endl
-         << "Restaurant: " << orders[0].restaurant << endl
-         << "Item: " << orders[0].item << endl
-         << "Price: $" << orders[0].price << endl;
+    cout << "First element: " << endl;
+    cout << "Date: " << time_str << " | Restaurant: " << orders[0].restaurant
+         << " | Item: " << orders[0].item << " | Price: $" << orders[0].price
+         << endl;
+
+    // Parse last element time
+    timeinfo = localtime(&orders[orders.size() - 1].timestamp);
+    strftime(time_str, sizeof(time_str), "%b %d %H:%M:%S", timeinfo);
+
+    cout << "Last element: " << endl;
+    cout << "Date: " << time_str
+         << " | Restaurant: " << orders[orders.size() - 1].restaurant
+         << " | Item: " << orders[orders.size() - 1].item << " | Price: $"
+         << orders[orders.size() - 1].price << endl;
 }

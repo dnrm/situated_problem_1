@@ -24,5 +24,7 @@ time_t convert_time_to_unix(const std::string& date_str);
 void parse_details(const std::string& details_str, Order& order);
 Order parse_order_line(std::string line);
 void print_orders(const std::vector<Order>& orders);
+void save_to_file(const std::string& filename,
+                  const std::vector<Order>& orders);
 
 #endif  // UTILS_H

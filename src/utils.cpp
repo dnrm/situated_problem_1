@@ -138,3 +138,25 @@ void print_orders(const vector<Order>& orders) {
          << " | Item: " << orders[orders.size() - 1].item << " | Price: $"
          << orders[orders.size() - 1].price << endl;
 }
+
+void save_to_file(const std::string& filename,
+                  const std::vector<Order>& orders) {
+    std::ofstream outfile(filename);
+    if (!outfile.is_open()) {
+        std::cerr << "Error opening file for writing: " << filename
+                  << std::endl;
+        return;
+    }
+
+    for (const auto& order : orders) {
+        // Convert timestamp back to readable format
+        char time_str[20];
+        struct tm* timeinfo = localtime(&order.timestamp);
+        strftime(time_str, sizeof(time_str), "%b %d %H:%M:%S", timeinfo);
+
+        outfile << time_str << " R:" << order.restaurant << " O:" << order.item
+                << " ($" << order.price << ")" << std::endl;
+    }
+
+    outfile.close();
+}

@@ -112,14 +112,17 @@ vector<Order> merge_sort(vector<Order> orders_copy) {
 // 6. Quick Sort (with median-of-three pivot selection)
 
 // Helper function to find median of three elements
-size_t median_of_three(const vector<Order>& orders, size_t first, size_t mid, size_t last) {
+size_t median_of_three(const vector<Order>& orders, size_t first, size_t mid,
+                       size_t last) {
     time_t first_val = orders[first].timestamp;
     time_t mid_val = orders[mid].timestamp;
     time_t last_val = orders[last].timestamp;
-    
-    if ((first_val <= mid_val && mid_val <= last_val) || (last_val <= mid_val && mid_val <= first_val)) {
+
+    if ((first_val <= mid_val && mid_val <= last_val) ||
+        (last_val <= mid_val && mid_val <= first_val)) {
         return mid;
-    } else if ((mid_val <= first_val && first_val <= last_val) || (last_val <= first_val && first_val <= mid_val)) {
+    } else if ((mid_val <= first_val && first_val <= last_val) ||
+               (last_val <= first_val && first_val <= mid_val)) {
         return first;
     } else {
         return last;
@@ -137,7 +140,7 @@ vector<Order> quick_sort(vector<Order> orders_copy) {
     size_t mid = orders_copy.size() / 2;
     size_t pivot_index = median_of_three(orders_copy, first, mid, last);
     Order pivot = orders_copy[pivot_index];
-    
+
     vector<Order> less;
     vector<Order> equal;
     vector<Order> greater;

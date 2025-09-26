@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#include "colors.h"
+
 struct Order {
     time_t timestamp;
     std::string restaurant;
@@ -26,5 +28,14 @@ Order parse_order_line(std::string line);
 void print_orders(const std::vector<Order>& orders);
 void save_to_file(const std::string& filename,
                   const std::vector<Order>& orders);
+
+// New functions for date range search
+time_t parse_user_date(const std::string& date_str);
+std::vector<Order> filter_orders_by_date_range(const std::vector<Order>& orders,
+                                               time_t start_date,
+                                               time_t end_date);
+std::string get_string(const std::string& prompt);
+void display_filtered_orders(const std::vector<Order>& orders);
+bool ask_user_to_save();
 
 #endif  // UTILS_H

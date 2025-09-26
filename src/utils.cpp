@@ -18,6 +18,10 @@
 using namespace std;
 
 // Function to map month abbreviation to number (1-12)
+// Input: month - string with 3-letter month abbreviation
+// Output: integer from 0-11 (0 for invalid month)
+// Time complexity: O(1) - searches through constant array of 12 elements
+
 int month_to_number(const std::string& month) {
     const std::string months[] = {"ene", "Feb", "Mar", "Abr", "May", "Jun",
                                   "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"};
@@ -30,6 +34,11 @@ int month_to_number(const std::string& month) {
     }
     return 0;  // invalid month
 }
+
+// Simple helper function to convert a date string to a Unix timestamp
+// Input: date_str - string in format "Feb 13 12:24:25"
+// Output: time_t Unix timestamp, or -1 if parsing fails
+// Time complexity: O(1) - fixed parsing operations
 
 time_t convert_time_to_unix(const std::string& date_str) {
     // Example date "Feb 13 12:24:25"
@@ -62,6 +71,12 @@ time_t convert_time_to_unix(const std::string& date_str) {
     return timestamp;
 }
 
+// This is called from within the parse_order_line function to get the
+// restaurant, item, and price from the details section of the line.
+// Input: details_str - string containing restaurant, order, and price info
+// Output: order - Order struct modified by reference with parsed data
+// Time complexity: O(n) where n is length of details_str for string operations
+
 void parse_details(const string& details_str, Order& order) {
     size_t restaurant_start = details_str.find("R:") + 2;
     size_t item_start = details_str.find(" O:") + 3;
@@ -80,6 +95,12 @@ void parse_details(const string& details_str, Order& order) {
     order.item = details_str.substr(item_start, price_start - item_start - 1);
     order.price = stoi(details_str.substr(price_start, details_str.rfind(")")));
 }
+
+// This is the function that parses the entire line into an Order struct
+// It uses the above two helper functions to do so.
+// Input: line - string containing complete order information
+// Output: Order struct with parsed timestamp, restaurant, item, and price
+// Time complexity: O(n) where n is length of line for string operations
 
 Order parse_order_line(string line) {
     Order result;
@@ -112,35 +133,9 @@ Order parse_order_line(string line) {
     return result;
 }
 
-void print_orders(const vector<Order>& orders) {
-    if (orders.empty()) {
-        cout << ERROR_STYLE << "No orders found." << RESET << endl;
-        return;
-    }
-
-    // Convert timestamp to readable format
-    char time_str[20];
-    struct tm* timeinfo = localtime(&orders[0].timestamp);
-    strftime(time_str, sizeof(time_str), "%b %d %H:%M:%S", timeinfo);
-
-    cout << HEADER_STYLE << "First element: " << RESET << endl;
-    cout << TIMESTAMP_STYLE << "Date: " << time_str << RESET << " | "
-         << RESTAURANT_STYLE << "Restaurant: " << orders[0].restaurant << RESET
-         << " | " << ITEM_STYLE << "Item: " << orders[0].item << RESET << " | "
-         << PRICE_STYLE << "Price: $" << orders[0].price << RESET << endl;
-
-    // Parse last element time
-    timeinfo = localtime(&orders[orders.size() - 1].timestamp);
-    strftime(time_str, sizeof(time_str), "%b %d %H:%M:%S", timeinfo);
-
-    cout << HEADER_STYLE << "Last element: " << RESET << endl;
-    cout << TIMESTAMP_STYLE << "Date: " << time_str << RESET << " | "
-         << RESTAURANT_STYLE
-         << "Restaurant: " << orders[orders.size() - 1].restaurant << RESET
-         << " | " << ITEM_STYLE << "Item: " << orders[orders.size() - 1].item
-         << RESET << " | " << PRICE_STYLE << "Price: $"
-         << orders[orders.size() - 1].price << RESET << endl;
-}
+// Input: filename - path to output file, orders - vector of Order structs to save
+// Output: void - writes orders to file in readable format
+// Time complexity: O(n) where n is number of orders
 
 void save_to_file(const std::string& filename,
                   const std::vector<Order>& orders) {
@@ -151,6 +146,8 @@ void save_to_file(const std::string& filename,
                   << std::endl;
         return;
     }
+
+    // Save each line to the output file
 
     for (const auto& order : orders) {
         // Convert timestamp back to readable format
@@ -165,14 +162,18 @@ void save_to_file(const std::string& filename,
     outfile.close();
 }
 
-// New functions for date range search
+// Input: date_str - string in format "Mon DD" (e.g., "Feb 13")
+// Output: time_t timestamp for start of specified date, or -1 if parsing fails
+// Time complexity: O(1) - fixed parsing operations
+
 time_t parse_user_date(const std::string& date_str) {
-    // Parse user input in format "Mon DD" (e.g., "Feb 13", "Dec 24")
+    // Parse user input in format "Mon DD" to time_t
     char month_buffer[4];
     int day;
 
+    // Validate format of user input
     if (sscanf(date_str.c_str(), "%3s %d", month_buffer, &day) != 2) {
-        return -1;  // Invalid format
+        return -1;
     }
 
     // Get current year
@@ -184,7 +185,7 @@ time_t parse_user_date(const std::string& date_str) {
     time_info.tm_year = current_year - 1900;
     time_info.tm_mon = month_to_number(month_buffer);
     time_info.tm_mday = day;
-    time_info.tm_hour = 0;  // Start of day
+    time_info.tm_hour = 0;
     time_info.tm_min = 0;
     time_info.tm_sec = 0;
     time_info.tm_isdst = -1;
@@ -192,12 +193,18 @@ time_t parse_user_date(const std::string& date_str) {
     return mktime(&time_info);
 }
 
+// Function to filter orders within a date range
+// Input: orders - vector of Order structs, start_date & end_date - time_t timestamps
+// Output: vector of Order structs within the specified date range
+// Time complexity: O(n) where n is number of orders in input vector
+
 std::vector<Order> filter_orders_by_date_range(const std::vector<Order>& orders,
                                                time_t start_date,
                                                time_t end_date) {
     std::vector<Order> filtered_orders;
 
-    // Adjust end_date to end of day (23:59:59)
+    // Adjust end_date to end of day (23:59:59) to include all orders on that
+    // date and prevent timezone issues
     struct tm* end_tm = localtime(&end_date);
     end_tm->tm_hour = 23;
     end_tm->tm_min = 59;
@@ -213,6 +220,8 @@ std::vector<Order> filter_orders_by_date_range(const std::vector<Order>& orders,
 
     return filtered_orders;
 }
+
+// Helper function to capture user input string
 
 std::string get_string(const std::string& prompt) {
     std::string input;
@@ -236,6 +245,8 @@ void display_filtered_orders(const std::vector<Order>& orders) {
               << " order(s):" << RESET << std::endl;
     std::cout << DIM << "-------------------------" << RESET << std::endl;
 
+    // Loop over and print each order
+
     for (size_t i = 0; i < orders.size(); i++) {
         char time_str[20];
         struct tm* timeinfo = localtime(&orders[i].timestamp);
@@ -252,6 +263,8 @@ void display_filtered_orders(const std::vector<Order>& orders) {
 }
 
 bool ask_user_to_save() {
+    // Just a boolean pretty much
+
     std::string response;
     std::cout << "\n"
               << INFO_STYLE

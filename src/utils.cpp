@@ -133,9 +133,9 @@ Order parse_order_line(string line) {
     return result;
 }
 
-// Input: filename - path to output file, orders - vector of Order structs to save
-// Output: void - writes orders to file in readable format
-// Time complexity: O(n) where n is number of orders
+// Input: filename - path to output file, orders - vector of Order structs to
+// save Output: void - writes orders to file in readable format Time complexity:
+// O(n) where n is number of orders
 
 void save_to_file(const std::string& filename,
                   const std::vector<Order>& orders) {
@@ -194,8 +194,8 @@ time_t parse_user_date(const std::string& date_str) {
 }
 
 // Function to filter orders within a date range
-// Input: orders - vector of Order structs, start_date & end_date - time_t timestamps
-// Output: vector of Order structs within the specified date range
+// Input: orders - vector of Order structs, start_date & end_date - time_t
+// timestamps Output: vector of Order structs within the specified date range
 // Time complexity: O(n) where n is number of orders in input vector
 
 std::vector<Order> filter_orders_by_date_range(const std::vector<Order>& orders,
